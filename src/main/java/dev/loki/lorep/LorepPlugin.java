@@ -1,7 +1,11 @@
 package dev.loki.lorep;
 
+import dev.loki.lorep.command.ReportCommand;
 import dev.loki.lorep.config.ConfigManager;
 import dev.loki.lorep.database.DatabaseManager;
+import dev.loki.lorep.database.PostgreSQLDatabaseManager;
+import dev.loki.lorep.database.SQLiteDatabaseManager;
+import dev.loki.lorep.gui.GuiClickListener;
 import dev.loki.lorep.webhook.DiscordWebhook;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,9 +21,56 @@ public final class LorepPlugin extends JavaPlugin {
         instance = this;
         getLogger().info("lorep plugin enabling...");
         
-        // Initialize managers (will be implemented later)
+        // Initialize config
+        configManager = new ConfigManager(this);
+        
+        // Initialize database
+        initializeDatabase();
+        
+        // Initialize webhook
+        String webhookUrl = configManager.getWebhookUrl();
+        if (webhookUrl != null && !webhookUrl.isEmpty()) {
+            discordWebhook = new DiscordWebhook(webhookUrl, getLogger());
+            getLogger().info("Discord webhook configured");
+        } else {
+            getLogger().warning("Discord webhook URL not configured");
+        }
+        
+        // Register commands
+        ReportCommand reportCommand = new ReportCommand(this);
+        getCommand("report").setExecutor(reportCommand);
+        getCommand("report").setTabCompleter(reportCommand);
+        
+        // Register listeners
+        getServer().getPluginManager().registerEvents(new GuiClickListener(this), this);
         
         getLogger().info("lorep plugin enabled!");
+    }
+    
+    private void initializeDatabase() {
+        String dbType = configManager.getDatabaseType();
+        
+        if ("postgresql".equalsIgnoreCase(dbType)) {
+            databaseManager = new PostgreSQLDatabaseManager(
+                configManager.getPostgresHost(),
+                configManager.getPostgresPort(),
+                configManager.getPostgresDatabase(),
+                configManager.getPostgresUsername(),
+                configManager.getPostgresPassword(),
+                configManager.getPostgresPoolSize(),
+                getLogger()
+            );
+            getLogger().info("Using PostgreSQL database");
+        } else {
+            databaseManager = new SQLiteDatabaseManager(
+                getDataFolder(),
+                configManager.getSqliteFile(),
+                getLogger()
+            );
+            getLogger().info("Using SQLite database");
+        }
+        
+        databaseManager.initialize();
     }
     
     @Override

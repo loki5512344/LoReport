@@ -109,8 +109,7 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         
-        // GUI will be implemented in task 7
-        player.sendMessage("§eGUI будет реализован позже");
+        new dev.loki.lorep.gui.ReportGui(plugin, 0).open(player);
         return true;
     }
     

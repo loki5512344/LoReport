@@ -116,22 +116,41 @@
     - **Property 8: Permission Enforcement**
     - **Validates: Requirements 6.1, 6.2, 6.3**
 
-- [ ] 7. Реализация GUI
+- [x] 7. Реализация GUI
+
+
+
+
   - [ ] 7.1 Создать ReportGui с пагинацией
     - Создать инвентарь 54 слота
     - Отображение голов игроков с их скинами
     - Lore с информацией о репорте
+
+
     - Кнопки навигации по страницам
     - _Requirements: 4.1, 4.2, 4.3, 4.4_
-  - [ ] 7.2 Создать GuiClickListener
+
+  - [-] 7.2 Создать GuiClickListener
+
+
+
     - Обработка кликов по страницам
+
+
     - Отмена выноса предметов
+
     - _Requirements: 4.4_
+
+
   - [ ] 7.3 Создать ReportGuiCommand (/report gui)
     - Проверка прав и открытие GUI
+
+
     - _Requirements: 4.1, 6.2_
+
   - [ ] 7.4 Написать property test для пагинации
     - **Property 6: Pagination Correctness**
+
     - **Validates: Requirements 4.4**
 
 - [ ] 8. Утилиты и сообщения

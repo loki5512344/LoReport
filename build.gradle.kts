@@ -28,6 +28,7 @@ dependencies {
     testImplementation("net.jqwik:jqwik:1.8.4")
     testImplementation("org.yaml:snakeyaml:2.2")
     testImplementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    testCompileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
