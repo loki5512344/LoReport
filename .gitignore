@@ -33,3 +33,6 @@ logs/
 
 # Plugin data
 plugins/lorep/
+
+# Kiro
+.kiro/
