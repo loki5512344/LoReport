@@ -74,6 +74,7 @@
 - [x] 4. Checkpoint - Проверка тестов БД
 
 
+
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Реализация Discord Webhook
