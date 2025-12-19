@@ -26,6 +26,8 @@ dependencies {
     
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("net.jqwik:jqwik:1.8.4")
+    testImplementation("org.yaml:snakeyaml:2.2")
+    testImplementation("org.xerial:sqlite-jdbc:3.45.1.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

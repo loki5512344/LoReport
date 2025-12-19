@@ -1,0 +1,20 @@
+name: lorep
+version: ${version}
+main: dev.loki.lorep.LorepPlugin
+api-version: '1.21'
+author: loki
+description: Player report system with Discord integration
+
+commands:
+  report:
+    description: Report a player or manage reports
+    usage: /report <player> <reason> | /report gui | /report stats <player>
+    permission: lorep.report
+
+permissions:
+  lorep.report:
+    description: Allows players to report other players
+    default: true
+  lorep.admin:
+    description: Allows access to admin commands (gui, stats)
+    default: op
