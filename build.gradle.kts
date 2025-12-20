@@ -37,7 +37,7 @@ tasks {
         archiveClassifier.set("")
         relocate("okhttp3", "dev.loki.lorep.libs.okhttp3")
         relocate("okio", "dev.loki.lorep.libs.okio")
-        relocate("com.zaxxer.hikari", "dev.loki.lorep.libs.hikari")
+        // Don't relocate HikariCP and PostgreSQL to avoid driver loading issues
     }
     
     build {
