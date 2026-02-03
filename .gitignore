@@ -22,7 +22,7 @@ Thumbs.db
 *.war
 *.ear
 hs_err_pid*
-
+modrinth
 # Logs
 *.log
 logs/
@@ -32,7 +32,10 @@ logs/
 *.sqlite
 
 # Plugin data
-plugins/lorep/
+plugins/Loreport/
 
 # Kiro
 .kiro/
+
+# Test data
+.jqwik-database

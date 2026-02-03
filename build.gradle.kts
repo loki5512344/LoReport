@@ -4,11 +4,11 @@ plugins {
 }
 
 group = "dev.loki"
-version = "1.0.0"
+version = "1.1.0"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
@@ -18,7 +18,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    // Используем более старую версию Paper API для совместимости с 1.19.2
+    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.zaxxer:HikariCP:5.1.0")
@@ -28,16 +29,18 @@ dependencies {
     testImplementation("net.jqwik:jqwik:1.8.4")
     testImplementation("org.yaml:snakeyaml:2.2")
     testImplementation("org.xerial:sqlite-jdbc:3.45.1.0")
-    testCompileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    testCompileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks {
     shadowJar {
         archiveClassifier.set("")
+        archiveBaseName.set("Loreport")
         relocate("okhttp3", "dev.loki.lorep.libs.okhttp3")
         relocate("okio", "dev.loki.lorep.libs.okio")
-        // Don't relocate HikariCP and PostgreSQL to avoid driver loading issues
+        relocate("com.zaxxer.hikari", "dev.loki.lorep.libs.hikari")
+        // Don't relocate PostgreSQL to avoid driver loading issues
     }
     
     build {
@@ -52,5 +55,15 @@ tasks {
         filesMatching("plugin.yml") {
             expand("version" to version)
         }
+    }
+    
+    compileJava {
+        options.encoding = "UTF-8"
+        options.release.set(17)
+    }
+    
+    compileTestJava {
+        options.encoding = "UTF-8"
+        options.release.set(17)
     }
 }

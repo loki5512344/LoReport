@@ -1,70 +1,51 @@
-# lorep
+# Loreport
 
-Плагин системы репортов для Paper 1.21
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Minecraft Version](https://img.shields.io/badge/Minecraft-1.19.2--1.21.4-green.svg)](https://papermc.io/)
+[![Java Version](https://img.shields.io/badge/Java-17+-orange.svg)](https://adoptium.net/)
 
-## Возможности
+Современная система репортов для Minecraft серверов с интеграцией Discord и удобным GUI.
 
-- `/report [ник] [причина]` — отправить репорт на игрока
-- `/report gui` — GUI со списком репортов (головы игроков с информацией)
-- `/report stats [ник]` — статистика репортов на игрока
-- Discord webhook уведомления о новых репортах
-- Поддержка SQLite и PostgreSQL
+## ✨ Возможности
 
-## Права
+- 📝 **Простая система репортов** - игроки могут легко отправлять репорты на нарушителей
+- 🎨 **Красивый GUI** - интуитивно понятный интерфейс для администраторов
+- 📊 **Статистика** - подробная информация о репортах на каждого игрока
+- 🔔 **Discord интеграция** - автоматические уведомления в Discord через webhook
+- 🗄️ **Гибкая база данных** - поддержка SQLite и PostgreSQL
+- 🌐 **Мультиязычность** - настраиваемые сообщения
+- ⚡ **Высокая производительность** - оптимизирован для больших серверов
 
-| Право | Описание | По умолчанию |
-|-------|----------|--------------|
-| `lorep.report` | Отправка репортов | true |
-| `lorep.admin` | GUI и статистика | op |
+## 🚀 Быстрый старт
 
-## Установка
+1. Скачайте последнюю версию из [Releases](https://codeberg.org/loki5512344/Loreport/releases)
+2. Поместите `Loreport-x.x.x.jar` в папку `plugins/`
+3. Перезапустите сервер
+4. Настройте `plugins/Loreport/config.yml`
 
-1. Скачай `lorep-1.0.0.jar` из [Releases](https://git.lokili.xyz/loki/lorep/releases)
-2. Положи в папку `plugins/`
-3. Перезапусти сервер
-4. Настрой `plugins/lorep/config.yml`
+## 📖 Документация
 
-## Конфигурация
+Подробная документация доступна в папке [docs/](docs/):
+- [Команды и права](docs/commands.md)
+- [Конфигурация](docs/configuration.md)
+- [FAQ](docs/faq.md)
+- [API для разработчиков](docs/api.md)
 
-```yaml
-# Discord Webhook URL
-webhook-url: "https://discord.com/api/webhooks/..."
+## 🎯 Совместимость
 
-# База данных
-database:
-  type: "sqlite"  # sqlite или postgresql
-  
-  sqlite:
-    file: "reports.db"
-  
-  postgresql:
-    host: "localhost"
-    port: 5432
-    database: "lorep"
-    username: "lorep"
-    password: "password"
-    pool-size: 10
+- **Minecraft**: 1.19.2 - 1.21.4
+- **Серверное ПО**: Paper, Purpur, Pufferfish
+- **Java**: 17+
 
-# Сообщения
-messages:
-  report-sent: "&aРепорт успешно отправлен!"
-  already-reported: "&cВы уже отправляли репорт на этого игрока!"
-  # ...
-```
+## 🤝 Поддержка
 
-## Сборка
+- [Issues](https://codeberg.org/loki5512344/Loreport/issues) - сообщения об ошибках
+- [Discussions](https://codeberg.org/loki5512344/Loreport/discussions) - вопросы и предложения
 
-```bash
-./gradlew shadowJar
-```
+## 📄 Лицензия
 
-Jar будет в `build/libs/lorep-1.0.0.jar`
+Этот проект распространяется под лицензией [GPL-3.0](LICENSE).
 
-## Требования
+## 👨‍💻 Автор
 
-- Paper 1.21+
-- Java 21
-
-## Автор
-
-loki
+Создано [loki5512344](https://codeberg.org/loki5512344)

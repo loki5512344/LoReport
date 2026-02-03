@@ -36,7 +36,11 @@ public class PostgreSQLDatabaseManager implements DatabaseManager {
     @Override
     public void initialize() {
         try {
+            // Explicitly load PostgreSQL driver
+            Class.forName("org.postgresql.Driver");
+            
             HikariConfig config = new HikariConfig();
+            config.setDriverClassName("org.postgresql.Driver");
             config.setJdbcUrl("jdbc:postgresql://" + host + ":" + port + "/" + database);
             config.setUsername(username);
             config.setPassword(password);
@@ -49,6 +53,8 @@ public class PostgreSQLDatabaseManager implements DatabaseManager {
             dataSource = new HikariDataSource(config);
             createTables();
             logger.info("PostgreSQL database initialized: " + host + ":" + port + "/" + database);
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "PostgreSQL driver not found", e);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Failed to initialize PostgreSQL database", e);
         }
