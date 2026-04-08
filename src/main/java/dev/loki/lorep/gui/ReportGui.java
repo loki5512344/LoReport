@@ -16,10 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReportGui implements InventoryHolder {
-    
+
     public static final int PAGE_SIZE = 45; // 5 rows for reports
     public static final int INVENTORY_SIZE = 54; // 6 rows total
-    
+
+    public static final int SLOT_PREV_PAGE = 45;
+    public static final int SLOT_CLOSE = 47;
+    public static final int SLOT_PAGE_INFO = 49;
+    public static final int SLOT_NEXT_PAGE = 53;
+
     private final LorepPlugin plugin;
     private final int page;
     private Inventory inventory;
@@ -78,8 +83,8 @@ public class ReportGui implements InventoryHolder {
 
     private void addNavigationButtons(int totalReports) {
         int totalPages = (int) Math.ceil((double) totalReports / PAGE_SIZE);
-        
-        // Previous page button (slot 45)
+
+        // Previous page button
         if (page > 0) {
             ItemStack prevButton = new ItemStack(Material.ARROW);
             ItemMeta prevMeta = prevButton.getItemMeta();
@@ -87,10 +92,10 @@ public class ReportGui implements InventoryHolder {
                 prevMeta.setDisplayName("§a← Предыдущая страница");
                 prevButton.setItemMeta(prevMeta);
             }
-            inventory.setItem(45, prevButton);
+            inventory.setItem(SLOT_PREV_PAGE, prevButton);
         }
-        
-        // Page info (slot 49)
+
+        // Page info
         ItemStack pageInfo = new ItemStack(Material.PAPER);
         ItemMeta pageMeta = pageInfo.getItemMeta();
         if (pageMeta != null) {
@@ -100,9 +105,9 @@ public class ReportGui implements InventoryHolder {
             pageMeta.setLore(lore);
             pageInfo.setItemMeta(pageMeta);
         }
-        inventory.setItem(49, pageInfo);
-        
-        // Next page button (slot 53)
+        inventory.setItem(SLOT_PAGE_INFO, pageInfo);
+
+        // Next page button
         if (page < totalPages - 1) {
             ItemStack nextButton = new ItemStack(Material.ARROW);
             ItemMeta nextMeta = nextButton.getItemMeta();
@@ -110,17 +115,17 @@ public class ReportGui implements InventoryHolder {
                 nextMeta.setDisplayName("§aСледующая страница →");
                 nextButton.setItemMeta(nextMeta);
             }
-            inventory.setItem(53, nextButton);
+            inventory.setItem(SLOT_NEXT_PAGE, nextButton);
         }
-        
-        // Close button (slot 47)
+
+        // Close button
         ItemStack closeButton = new ItemStack(Material.BARRIER);
         ItemMeta closeMeta = closeButton.getItemMeta();
         if (closeMeta != null) {
             closeMeta.setDisplayName("§cЗакрыть");
             closeButton.setItemMeta(closeMeta);
         }
-        inventory.setItem(47, closeButton);
+        inventory.setItem(SLOT_CLOSE, closeButton);
     }
     
     public int getPage() {

@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class ReportStatsCommand {
-    
+
+    private static final int MAX_RECENT_REPORTS = 5;
+
     private final LorepPlugin plugin;
     
     public ReportStatsCommand(LorepPlugin plugin) {
@@ -52,10 +54,10 @@ public class ReportStatsCommand {
             TimeUtil.formatTimeAgo(target.getLastPlayed());
         player.sendMessage(plugin.getConfigManager().getMessage("stats-last-online",
             "%time%", lastOnline));
-        
+
         // Recent reports (max 5)
         player.sendMessage("§7Последние репорты:");
-        int shown = Math.min(5, reports.size());
+        int shown = Math.min(MAX_RECENT_REPORTS, reports.size());
         for (int i = 0; i < shown; i++) {
             Report report = reports.get(i);
             String timeAgo = TimeUtil.formatTimeAgo(report.createdAt().toEpochMilli());
@@ -63,9 +65,9 @@ public class ReportStatsCommand {
                 "%reason%", report.reason(),
                 "%time%", timeAgo));
         }
-        
-        if (reports.size() > 5) {
-            player.sendMessage("§7... и ещё " + (reports.size() - 5) + " репортов");
+
+        if (reports.size() > MAX_RECENT_REPORTS) {
+            player.sendMessage("§7... и ещё " + (reports.size() - MAX_RECENT_REPORTS) + " репортов");
         }
     }
 }

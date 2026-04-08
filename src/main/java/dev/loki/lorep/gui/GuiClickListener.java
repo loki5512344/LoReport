@@ -29,23 +29,19 @@ public class GuiClickListener implements Listener {
         }
         
         int slot = event.getRawSlot();
-        
-        // Navigation buttons are in bottom row (slots 45-53)
-        switch (slot) {
-            case 45 -> { // Previous page
-                if (gui.getPage() > 0) {
-                    new ReportGui(plugin, gui.getPage() - 1).open(player);
-                }
+
+        // Navigation buttons are in bottom row
+        if (slot == ReportGui.SLOT_PREV_PAGE) {
+            if (gui.getPage() > 0) {
+                new ReportGui(plugin, gui.getPage() - 1).open(player);
             }
-            case 47 -> { // Close
-                player.closeInventory();
-            }
-            case 53 -> { // Next page
-                int totalReports = plugin.getDatabaseManager().getTotalReportCount();
-                int totalPages = PaginationUtil.calculateTotalPages(totalReports, ReportGui.PAGE_SIZE);
-                if (gui.getPage() < totalPages - 1) {
-                    new ReportGui(plugin, gui.getPage() + 1).open(player);
-                }
+        } else if (slot == ReportGui.SLOT_CLOSE) {
+            player.closeInventory();
+        } else if (slot == ReportGui.SLOT_NEXT_PAGE) {
+            int totalReports = plugin.getDatabaseManager().getTotalReportCount();
+            int totalPages = PaginationUtil.calculateTotalPages(totalReports, ReportGui.PAGE_SIZE);
+            if (gui.getPage() < totalPages - 1) {
+                new ReportGui(plugin, gui.getPage() + 1).open(player);
             }
         }
     }
