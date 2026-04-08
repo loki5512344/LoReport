@@ -96,17 +96,18 @@ public class SQLiteDatabaseManager implements DatabaseManager {
     public List<Report> getReportsForTarget(UUID targetUuid) {
         String sql = "SELECT * FROM reports WHERE target_uuid = ? ORDER BY created_at DESC";
         List<Report> reports = new ArrayList<>();
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);) {
             stmt.setString(1, targetUuid.toString());
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                reports.add(mapReport(rs));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    reports.add(mapReport(rs));
+                }
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to get reports for target", e);
         }
-        
+
         return reports;
     }
     
@@ -114,51 +115,53 @@ public class SQLiteDatabaseManager implements DatabaseManager {
     public List<Report> getAllReports() {
         String sql = "SELECT * FROM reports ORDER BY created_at DESC";
         List<Report> reports = new ArrayList<>();
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 reports.add(mapReport(rs));
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to get all reports", e);
         }
-        
+
         return reports;
     }
     
     @Override
     public int getReportCount(UUID targetUuid) {
         String sql = "SELECT COUNT(*) FROM reports WHERE target_uuid = ?";
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, targetUuid.toString());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to get report count", e);
         }
-        
+
         return 0;
     }
     
     @Override
     public boolean hasReported(UUID reporterUuid, UUID targetUuid) {
         String sql = "SELECT COUNT(*) FROM reports WHERE reporter_uuid = ? AND target_uuid = ?";
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, reporterUuid.toString());
             stmt.setString(2, targetUuid.toString());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to check if reported", e);
         }
-        
+
         return false;
     }
     
@@ -166,34 +169,35 @@ public class SQLiteDatabaseManager implements DatabaseManager {
     public List<Report> getReportsPaginated(int page, int pageSize) {
         String sql = "SELECT * FROM reports ORDER BY created_at DESC LIMIT ? OFFSET ?";
         List<Report> reports = new ArrayList<>();
-        
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, pageSize);
             stmt.setInt(2, page * pageSize);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                reports.add(mapReport(rs));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    reports.add(mapReport(rs));
+                }
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to get paginated reports", e);
         }
-        
+
         return reports;
     }
     
     @Override
     public int getTotalReportCount() {
         String sql = "SELECT COUNT(*) FROM reports";
-        
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            ResultSet rs = stmt.executeQuery();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to get total report count", e);
         }
-        
+
         return 0;
     }
     

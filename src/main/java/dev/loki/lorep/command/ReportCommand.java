@@ -57,7 +57,18 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
         
         String targetName = args[0];
         String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        
+
+        // Validate reason
+        if (reason.trim().isEmpty()) {
+            player.sendMessage(plugin.getConfigManager().getMessage("usage"));
+            return true;
+        }
+
+        if (reason.length() > 500) {
+            player.sendMessage("§cПричина слишком длинная! Максимум 500 символов.");
+            return true;
+        }
+
         return handleReport(player, targetName, reason);
     }
     

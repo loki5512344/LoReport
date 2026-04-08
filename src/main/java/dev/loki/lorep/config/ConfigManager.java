@@ -63,8 +63,13 @@ public class ConfigManager {
     
     public String getMessage(String key, String... replacements) {
         String message = getMessage(key);
+        if (replacements == null || replacements.length == 0) {
+            return message;
+        }
         for (int i = 0; i < replacements.length - 1; i += 2) {
-            message = message.replace(replacements[i], replacements[i + 1]);
+            if (replacements[i] != null && replacements[i + 1] != null) {
+                message = message.replace(replacements[i], replacements[i + 1]);
+            }
         }
         return message;
     }
