@@ -1,12 +1,16 @@
 package dev.loki.lorep.util;
 
 public class PaginationUtil {
-    
+
+    private PaginationUtil() {}
+
     public static int calculateTotalPages(int totalItems, int pageSize) {
         if (pageSize <= 0) {
             throw new IllegalArgumentException("pageSize must be positive");
         }
-        if (totalItems <= 0) return 1;
+        if (totalItems <= 0) {
+            return 1;
+        }
         return (int) Math.ceil((double) totalItems / pageSize);
     }
     

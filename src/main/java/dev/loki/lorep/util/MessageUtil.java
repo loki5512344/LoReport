@@ -5,7 +5,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class MessageUtil {
-    
+
+    private MessageUtil() {}
+
     private static final String PREFIX = "§8[§clorep§8] §r";
     
     public static String colorize(String message) {

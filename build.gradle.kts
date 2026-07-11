@@ -1,6 +1,7 @@
 plugins {
     java
     id("com.gradleup.shadow") version "9.0.0-beta4"
+    checkstyle
 }
 
 group = "dev.loki"
@@ -65,5 +66,20 @@ tasks {
     compileTestJava {
         options.encoding = "UTF-8"
         options.release.set(21)
+    }
+}
+
+checkstyle {
+    toolVersion = "10.21.4"
+    configFile = file("config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = false
+    maxErrors = 0
+    maxWarnings = 0
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }

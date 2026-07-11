@@ -5,6 +5,8 @@ import java.time.Instant;
 
 public class TimeUtil {
 
+    private TimeUtil() {}
+
     private static final long SECONDS_PER_MINUTE = 60;
     private static final long MINUTES_PER_HOUR = 60;
     private static final long HOURS_PER_DAY = 24;

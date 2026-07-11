@@ -138,8 +138,12 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
             String input = args[0].toLowerCase();
             
             if (sender.hasPermission("lorep.admin")) {
-                if ("gui".startsWith(input)) completions.add("gui");
-                if ("stats".startsWith(input)) completions.add("stats");
+                if ("gui".startsWith(input)) {
+                    completions.add("gui");
+                }
+                if ("stats".startsWith(input)) {
+                    completions.add("stats");
+                }
             }
             
             // Add online player names

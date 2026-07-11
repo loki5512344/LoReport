@@ -39,3 +39,6 @@ plugins/Loreport/
 
 # Test data
 .jqwik-database
+
+# Compiled output
+bin/
