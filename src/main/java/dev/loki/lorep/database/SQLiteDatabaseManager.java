@@ -54,6 +54,8 @@ public class SQLiteDatabaseManager implements DatabaseManager {
                 target_uuid TEXT NOT NULL,
                 target_name TEXT NOT NULL,
                 reason TEXT NOT NULL,
+                image_url TEXT,
+                status TEXT NOT NULL DEFAULT 'PENDING',
                 created_at INTEGER NOT NULL
             )
             """;
@@ -82,7 +84,8 @@ public class SQLiteDatabaseManager implements DatabaseManager {
     
     @Override
     public void saveReport(Report report) {
-        String sql = "INSERT INTO reports (reporter_uuid, reporter_name, target_uuid, target_name, reason, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO reports (reporter_uuid, reporter_name, target_uuid, "
+            + "target_name, reason, image_url, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, report.reporterUuid().toString());
@@ -90,7 +93,13 @@ public class SQLiteDatabaseManager implements DatabaseManager {
             stmt.setString(3, report.targetUuid().toString());
             stmt.setString(4, report.targetName());
             stmt.setString(5, report.reason());
-            stmt.setLong(6, report.createdAt().toEpochMilli());
+            if (report.imageUrl() != null) {
+                stmt.setString(6, report.imageUrl());
+            } else {
+                stmt.setNull(6, java.sql.Types.VARCHAR);
+            }
+            stmt.setString(7, report.status());
+            stmt.setLong(8, report.createdAt().toEpochMilli());
             stmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Failed to save report", e);
@@ -207,6 +216,10 @@ public class SQLiteDatabaseManager implements DatabaseManager {
     }
     
     private Report mapReport(ResultSet rs) throws SQLException {
+        String imageUrl = rs.getString("image_url");
+        if (rs.wasNull()) {
+            imageUrl = null;
+        }
         return new Report(
             rs.getInt("id"),
             UUID.fromString(rs.getString("reporter_uuid")),
@@ -214,7 +227,57 @@ public class SQLiteDatabaseManager implements DatabaseManager {
             UUID.fromString(rs.getString("target_uuid")),
             rs.getString("target_name"),
             rs.getString("reason"),
+            imageUrl,
+            rs.getString("status"),
             Instant.ofEpochMilli(rs.getLong("created_at"))
         );
+    }
+
+    @Override
+    public void updateReportStatus(int reportId, String status) {
+        String sql = "UPDATE reports SET status = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, reportId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Failed to update report status", e);
+        }
+    }
+
+    @Override
+    public void updateReportImage(int reportId, String imageUrl) {
+        String sql = "UPDATE reports SET image_url = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (imageUrl != null) {
+                stmt.setString(1, imageUrl);
+            } else {
+                stmt.setNull(1, java.sql.Types.VARCHAR);
+            }
+            stmt.setInt(2, reportId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Failed to update report image", e);
+        }
+    }
+
+    @Override
+    public Report getReportById(int id) {
+        String sql = "SELECT * FROM reports WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapReport(rs);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Failed to get report by id", e);
+        }
+
+        return null;
     }
 }

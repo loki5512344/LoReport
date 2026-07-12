@@ -49,14 +49,13 @@ public class ReportStatsCommand {
         player.sendMessage(plugin.getConfigManager().getMessage("stats-count",
             "%count%", String.valueOf(reportCount)));
         
-        // Last online
-        String lastOnline = target.isOnline() ? "Сейчас онлайн" : 
-            TimeUtil.formatTimeAgo(target.getLastPlayed());
+        String lastOnline = target.isOnline()
+            ? plugin.getConfigManager().getMessage("online-status")
+            : TimeUtil.formatTimeAgo(target.getLastPlayed());
         player.sendMessage(plugin.getConfigManager().getMessage("stats-last-online",
             "%time%", lastOnline));
 
-        // Recent reports (max 5)
-        player.sendMessage("§7Последние репорты:");
+        player.sendMessage(plugin.getConfigManager().getMessage("stats-recent-header"));
         int shown = Math.min(MAX_RECENT_REPORTS, reports.size());
         for (int i = 0; i < shown; i++) {
             Report report = reports.get(i);
@@ -67,7 +66,8 @@ public class ReportStatsCommand {
         }
 
         if (reports.size() > MAX_RECENT_REPORTS) {
-            player.sendMessage("§7... и ещё " + (reports.size() - MAX_RECENT_REPORTS) + " репортов");
+            player.sendMessage(plugin.getConfigManager().getMessage("stats-more-reports",
+                "%count%", String.valueOf(reports.size() - MAX_RECENT_REPORTS)));
         }
     }
 }

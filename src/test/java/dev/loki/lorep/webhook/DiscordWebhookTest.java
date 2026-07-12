@@ -33,13 +33,11 @@ public class DiscordWebhookTest {
         DiscordWebhook webhook = new DiscordWebhook("https://example.com/webhook", logger);
         
         Report report = new Report(
-            1,
             UUID.randomUUID(),
             reporterName,
             UUID.randomUUID(),
             targetName,
-            reason,
-            Instant.now()
+            reason
         );
         
         String payload = webhook.buildPayload(report);
@@ -95,9 +93,9 @@ public class DiscordWebhookTest {
         DiscordWebhook webhook = new DiscordWebhook("https://example.com/webhook", logger);
         
         Report report = new Report(
-            1, UUID.randomUUID(), "TestReporter",
+            UUID.randomUUID(), "TestReporter",
             UUID.randomUUID(), "TestTarget",
-            "Test reason", Instant.now()
+            "Test reason"
         );
         
         String payload = webhook.buildPayload(report);

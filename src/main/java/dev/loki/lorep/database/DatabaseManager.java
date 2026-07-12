@@ -20,6 +20,12 @@ public interface DatabaseManager {
     boolean hasReported(UUID reporterUuid, UUID targetUuid);
     
     List<Report> getReportsPaginated(int page, int pageSize);
-    
+
     int getTotalReportCount();
+
+    void updateReportStatus(int reportId, String status);
+
+    void updateReportImage(int reportId, String imageUrl);
+
+    Report getReportById(int id);
 }

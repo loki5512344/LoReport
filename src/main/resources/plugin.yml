@@ -9,7 +9,7 @@ website: https://codeberg.org/loki5512344/Loreport
 commands:
   report:
     description: Report a player or manage reports
-    usage: /report <player> <reason> | /report gui | /report stats <player>
+    usage: /report <player> <reason> [image_url] | /report gui | /report stats <player> | /report image <id> <url>
     permission: lorep.report
     aliases: [rep, reports]
 

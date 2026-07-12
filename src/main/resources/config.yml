@@ -1,16 +1,16 @@
-# Discord Webhook URL для уведомлений
+# Discord webhook URL for report notifications
 webhook-url: ""
 
-# Настройки базы данных
+# Database configuration
 database:
-  # Тип БД: sqlite или postgresql
+  # Database type: "sqlite" or "postgresql"
   type: "sqlite"
   
-  # Настройки SQLite
+  # SQLite settings
   sqlite:
     file: "reports.db"
   
-  # Настройки PostgreSQL
+  # PostgreSQL settings
   postgresql:
     host: "localhost"
     port: 5432
@@ -19,48 +19,145 @@ database:
     password: "password"
     pool-size: 10
 
-# Настройки GUI
+# GUI settings
 gui:
-  # Количество репортов на странице
+  # Reports per page in GUI
   reports-per-page: 45
-  # Автообновление GUI (в тиках, 20 тиков = 1 секунда)
+  # Auto-refresh interval in ticks (20 ticks = 1 second)
   auto-refresh: 100
-  # Показывать головы игроков в GUI
+  # Show player heads in GUI
   show-player-heads: true
+  # GUI item definitions — customize materials, textures, and positions
+  # Set custom-model-data to your resource pack model ID (-1 to disable)
+  # Use slots to make an item span multiple slots (empty = default position)
+  items:
+    prev-page:
+      material: ARROW
+      custom-model-data: -1
+      name: "&a← Previous page"
+      lore: []
+      slots: [45]
+      glowing: false
+    next-page:
+      material: ARROW
+      custom-model-data: -1
+      name: "&aNext page →"
+      lore: []
+      slots: [53]
+      glowing: false
+    page-info:
+      material: PAPER
+      custom-model-data: -1
+      name: "&ePage %page% of %total%"
+      lore:
+        - "&7Total reports: %total_reports%"
+      slots: [49]
+      glowing: false
+    close:
+      material: BARRIER
+      custom-model-data: -1
+      name: "&cClose"
+      lore: []
+      slots: [47]
+      glowing: false
+    report-entry:
+      material: PLAYER_HEAD
+      custom-model-data: -1
+      name: "&c%target_name%"
+      lore:
+        - "&7"
+        - "&eBy: &f%reporter_name%"
+        - "&eReason: &f%reason%"
+        - "&eTime: &f%time%"
+        - "&eStatus: &f%status%"
+        - "&7"
+        - "&eReports: &c%report_count%"
+      slots: []
+      glowing: false
+    status-pending:
+      material: RED_STAINED_GLASS_PANE
+      custom-model-data: -1
+      name: "&cPending"
+      lore: []
+      slots: []
+      glowing: false
+    status-reviewing:
+      material: YELLOW_STAINED_GLASS_PANE
+      custom-model-data: -1
+      name: "&eReviewing"
+      lore: []
+      slots: []
+      glowing: true
+    status-resolved:
+      material: GREEN_STAINED_GLASS_PANE
+      custom-model-data: -1
+      name: "&aResolved"
+      lore: []
+      slots: []
+      glowing: false
+    status-dismissed:
+      material: GRAY_STAINED_GLASS_PANE
+      custom-model-data: -1
+      name: "&7Dismissed"
+      lore: []
+      slots: []
+      glowing: false
+    teleport:
+      material: ENDER_PEARL
+      custom-model-data: -1
+      name: "&bTeleport to player"
+      lore: []
+      slots: []
+      glowing: false
+    screenshot:
+      material: MAP
+      custom-model-data: -1
+      name: "&aScreenshot"
+      lore: []
+      slots: []
+      glowing: false
 
-# Ограничения
+# Limits
 limits:
-  # Максимальная длина причины репорта
+  # Maximum reason length in characters
   max-reason-length: 100
-  # Кулдаун между репортами (в секундах)
+  # Cooldown between reports (seconds)
   report-cooldown: 30
-  # Максимум репортов на одного игрока от одного отправителя
+  # Max reports per player from the same reporter
   max-reports-per-player: 3
 
-# Уведомления
+# Notifications
 notifications:
-  # Уведомлять администраторов о новых репортах
+  # Notify admins about new reports
   notify-admins: true
-  # Звук уведомления для администраторов
+  # Admin notification sound
   admin-notification-sound: "BLOCK_NOTE_BLOCK_PLING"
-  # Уведомлять игрока о принятии репорта
+  # Notify reporter when report is handled
   notify-reporter: true
 
-# Сообщения
+# Messages (override defaults from messages.yml)
 messages:
-  report-sent: "&aРепорт успешно отправлен!"
-  already-reported: "&cВы уже отправляли репорт на этого игрока!"
-  self-report: "&cВы не можете отправить репорт на себя!"
-  player-not-found: "&cИгрок не найден!"
-  no-permission: "&cУ вас нет прав на эту команду!"
-  usage: "&eИспользование: /report <ник> <причина>"
-  no-reports: "&eУ этого игрока нет репортов."
-  stats-header: "&6=== Статистика репортов: %player% ==="
-  stats-count: "&eВсего репортов: &f%count%"
-  stats-last-online: "&eПоследний онлайн: &f%time%"
-  stats-report-entry: "&7- %reason% &8(%time% назад)"
-  gui-title: "Репорты - Страница %page%"
-  cooldown: "&cПодождите %time% секунд перед следующим репортом!"
-  reason-too-long: "&cПричина слишком длинная! Максимум %max% символов."
-  max-reports-reached: "&cВы уже отправили максимальное количество репортов на этого игрока!"
-  admin-notification: "&6[Loreport] &eНовый репорт от &f%reporter% &eна &f%reported%: &7%reason%"
+  report-sent: "&aReport sent successfully!"
+  already-reported: "&cYou have already reported this player!"
+  self-report: "&cYou cannot report yourself!"
+  player-not-found: "&cPlayer not found!"
+  no-permission: "&cYou don't have permission!"
+  usage: "&eUsage: /report <player> <reason> [screenshot_url] | /report gui | /report stats <player> | /report image <id> <url>"
+  no-reports: "&eThis player has no reports."
+  stats-header: "&6=== Report stats: %player% ==="
+  stats-count: "&eTotal reports: &f%count%"
+  stats-last-online: "&eLast online: &f%time%"
+  stats-report-entry: "&7- %reason% &8(%time% ago)"
+  gui-title: "Reports - Page %page%"
+  cooldown: "&cPlease wait %time% seconds before your next report!"
+  reason-too-long: "&cReason too long! Max %max% characters."
+  max-reports-reached: "&cYou've reached the max reports for this player!"
+  admin-notification: "&6[LoReport] &eNew report from &f%reporter% &eon &f%reported%: &7%reason%"
+  report-status-changed: "&aReport #%id% status changed to: %status%"
+  report-image-added: "&aScreenshot added to report #%id%"
+  report-image-usage: "&eUsage: /report <player> <reason> [screenshot_url]"
+  report-image-url-usage: "&eUsage: /report image <id> <url>"
+  status-pending: "&cPending"
+  status-reviewing: "&eReviewing"
+  status-resolved: "&aResolved"
+  status-dismissed: "&7Dismissed"

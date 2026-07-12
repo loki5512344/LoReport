@@ -16,101 +16,152 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReportCommand implements CommandExecutor, TabCompleter {
-    
+
     private final LorepPlugin plugin;
-    
+
     public ReportCommand(LorepPlugin plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cЭта команда только для игроков!");
+            sender.sendMessage(plugin.getConfigManager().getMessage("console-only"));
             return true;
         }
-        
+
         if (args.length == 0) {
             player.sendMessage(plugin.getConfigManager().getMessage("usage"));
             return true;
         }
-        
-        // Handle subcommands for admins
+
         if (args[0].equalsIgnoreCase("gui")) {
             return handleGui(player);
         }
-        
+
         if (args[0].equalsIgnoreCase("stats") && args.length >= 2) {
             return handleStats(player, args[1]);
         }
-        
-        // Regular report command
+
+        if (args[0].equalsIgnoreCase("image") && args.length >= 3) {
+            return handleReportImage(player, args[1], args[2]);
+        }
+
         if (!player.hasPermission("lorep.report")) {
             player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
             return true;
         }
-        
+
         if (args.length < 2) {
             player.sendMessage(plugin.getConfigManager().getMessage("usage"));
             return true;
         }
-        
-        String targetName = args[0];
-        String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-        // Validate reason
+        String targetName = args[0];
+        String reason;
+        String imageUrl = null;
+
+        if (args.length >= 3 && args[2].startsWith("http")) {
+            reason = args[1];
+            imageUrl = args[2];
+        } else {
+            reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        }
+
         if (reason.trim().isEmpty()) {
             player.sendMessage(plugin.getConfigManager().getMessage("usage"));
             return true;
         }
 
         if (reason.length() > 500) {
-            player.sendMessage("§cПричина слишком длинная! Максимум 500 символов.");
+            player.sendMessage(plugin.getConfigManager().getMessage("reason-too-long", "%max%", "500"));
             return true;
         }
 
-        return handleReport(player, targetName, reason);
+        return handleReport(player, targetName, reason, imageUrl);
     }
-    
+
     private boolean handleReport(Player reporter, String targetName, String reason) {
-        // Check if target exists
+        return handleReport(reporter, targetName, reason, null);
+    }
+
+    private boolean handleReport(Player reporter, String targetName, String reason, String imageUrl) {
         @SuppressWarnings("deprecation")
         OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
-        
+
         if (!target.hasPlayedBefore() && !target.isOnline()) {
             reporter.sendMessage(plugin.getConfigManager().getMessage("player-not-found"));
             return true;
         }
-        
-        // Check self-report
+
         if (target.getUniqueId().equals(reporter.getUniqueId())) {
             reporter.sendMessage(plugin.getConfigManager().getMessage("self-report"));
             return true;
         }
-        
-        // Check duplicate report
+
         if (plugin.getDatabaseManager().hasReported(reporter.getUniqueId(), target.getUniqueId())) {
             reporter.sendMessage(plugin.getConfigManager().getMessage("already-reported"));
             return true;
         }
-        
-        // Create and save report
+
         Report report = new Report(
             reporter.getUniqueId(),
             reporter.getName(),
             target.getUniqueId(),
             target.getName() != null ? target.getName() : targetName,
-            reason
+            reason,
+            imageUrl
         );
-        
+
         plugin.getDatabaseManager().saveReport(report);
-        
-        // Send to Discord webhook
+
         if (plugin.getDiscordWebhook() != null) {
             plugin.getDiscordWebhook().sendReport(report);
         }
-        
+
         reporter.sendMessage(plugin.getConfigManager().getMessage("report-sent"));
+        return true;
+    }
+
+    private boolean handleReportImage(Player player, String idStr, String imageUrl) {
+        if (!player.hasPermission("lorep.admin")) {
+            player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
+            return true;
+        }
+
+        int reportId;
+        try {
+            reportId = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            player.sendMessage(plugin.getConfigManager().getMessage("invalid-report-id"));
+            return true;
+        }
+
+        Report report = plugin.getDatabaseManager().getReportById(reportId);
+        if (report == null) {
+            player.sendMessage(plugin.getConfigManager().getMessage("report-not-found"));
+            return true;
+        }
+
+        plugin.getDatabaseManager().updateReportImage(reportId, imageUrl);
+
+        Report updated = new Report(
+            report.id(),
+            report.reporterUuid(),
+            report.reporterName(),
+            report.targetUuid(),
+            report.targetName(),
+            report.reason(),
+            imageUrl,
+            report.status(),
+            report.createdAt()
+        );
+
+        if (plugin.getDiscordWebhook() != null) {
+            plugin.getDiscordWebhook().sendReport(updated);
+        }
+
+        player.sendMessage(plugin.getConfigManager().getMessage("report-image-updated", "%id%", String.valueOf(reportId)));
         return true;
     }
 
@@ -119,24 +170,23 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(plugin.getConfigManager().getMessage("no-permission"));
             return true;
         }
-        
+
         new dev.loki.lorep.gui.ReportGui(plugin, 0).open(player);
         return true;
     }
-    
+
     private boolean handleStats(Player player, String targetName) {
         new ReportStatsCommand(plugin).execute(player, targetName);
         return true;
     }
-    
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
-        
+
         if (args.length == 1) {
-            // First argument: player names or subcommands
             String input = args[0].toLowerCase();
-            
+
             if (sender.hasPermission("lorep.admin")) {
                 if ("gui".startsWith(input)) {
                     completions.add("gui");
@@ -144,9 +194,11 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
                 if ("stats".startsWith(input)) {
                     completions.add("stats");
                 }
+                if ("image".startsWith(input)) {
+                    completions.add("image");
+                }
             }
-            
-            // Add online player names
+
             completions.addAll(
                 Bukkit.getOnlinePlayers().stream()
                     .map(Player::getName)
@@ -154,7 +206,6 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
                     .collect(Collectors.toList())
             );
         } else if (args.length == 2 && args[0].equalsIgnoreCase("stats")) {
-            // Second argument for stats: player names
             String input = args[1].toLowerCase();
             completions.addAll(
                 Bukkit.getOnlinePlayers().stream()
@@ -163,7 +214,7 @@ public class ReportCommand implements CommandExecutor, TabCompleter {
                     .collect(Collectors.toList())
             );
         }
-        
+
         return completions;
     }
 }

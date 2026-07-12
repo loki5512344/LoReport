@@ -65,7 +65,7 @@ public class DatabaseManagerTest {
         Assume.that(!reporterUuid.equals(targetUuid));
         
         Report report = new Report(
-            0, reporterUuid, "Reporter", targetUuid, "Target", reason, Instant.now()
+            reporterUuid, "Reporter", targetUuid, "Target", reason
         );
         
         dbManager.saveReport(report);
@@ -95,7 +95,7 @@ public class DatabaseManagerTest {
             "Should not have reported before creating report");
         
         Report report = new Report(
-            0, reporterUuid, "Reporter", targetUuid, "Target", "Test reason", Instant.now()
+            reporterUuid, "Reporter", targetUuid, "Target", "Test reason"
         );
         dbManager.saveReport(report);
         
@@ -121,7 +121,7 @@ public class DatabaseManagerTest {
         String targetName = "Target_" + targetUuid.toString().substring(0, 8);
         Instant createdAt = Instant.now();
         
-        Report original = new Report(0, reporterUuid, reporterName, targetUuid, targetName, reason, createdAt);
+        Report original = new Report(0, reporterUuid, reporterName, targetUuid, targetName, reason, null, "PENDING", createdAt);
         dbManager.saveReport(original);
         
         // Close and reopen database
@@ -151,9 +151,10 @@ public class DatabaseManagerTest {
         UUID targetUuid = UUID.randomUUID();
         
         for (int i = 0; i < count; i++) {
+            Instant reportTime = Instant.now().minusSeconds(count - i);
             Report report = new Report(
                 0, UUID.randomUUID(), "Reporter" + i, targetUuid, "Target",
-                "Reason " + i, Instant.now().minusSeconds(count - i)
+                "Reason " + i, null, "PENDING", reportTime
             );
             dbManager.saveReport(report);
         }
@@ -180,8 +181,8 @@ public class DatabaseManagerTest {
         
         for (int i = 0; i < count; i++) {
             Report report = new Report(
-                0, UUID.randomUUID(), "Reporter" + i, targetUuid, "Target",
-                "Reason " + i, Instant.now()
+                UUID.randomUUID(), "Reporter" + i, targetUuid, "Target",
+                "Reason " + i
             );
             dbManager.saveReport(report);
         }

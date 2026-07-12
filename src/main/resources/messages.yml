@@ -1,0 +1,50 @@
+# LoReport messages
+# You can edit these to change plugin messages without recompiling
+# Color codes: &0-9, &a-f, &k-o, &r
+
+# General
+console-only: "&cThis command is for players only!"
+no-permission: "&cYou don't have permission to use this command!"
+usage: "&eUsage: /report <player> <reason> [screenshot_url] | /report gui | /report stats <player> | /report image <id> <url>"
+
+# Reporting
+report-sent: "&aReport sent successfully!"
+already-reported: "&cYou have already reported this player!"
+self-report: "&cYou cannot report yourself!"
+player-not-found: "&cPlayer not found!"
+reason-too-long: "&cReason is too long! Maximum %max% characters."
+max-reports-reached: "&cYou have reached the maximum number of reports for this player!"
+cooldown: "&cPlease wait %time% seconds before your next report!"
+invalid-report-id: "&cInvalid report ID."
+report-not-found: "&cReport with this ID not found."
+report-image-updated: "&aImage for report #%id% updated."
+
+# Admin notifications
+admin-notification: "&6[LoReport] &eNew report from &f%reporter% &eon &f%reported%: &7%reason%"
+
+# Report status
+report-status-changed: "&aReport #%id% status changed to: %status%"
+report-image-added: "&aScreenshot added to report #%id%"
+report-image-usage: "&eUsage: /report <player> <reason> [screenshot_url]"
+report-image-url-usage: "&eUsage: /report image <id> <url>"
+status-pending: "&cPending"
+status-reviewing: "&eReviewing"
+status-resolved: "&aResolved"
+status-dismissed: "&7Dismissed"
+
+# GUI
+gui-title: "Reports - Page %page%"
+gui-title-detail: "&8Report #%id%"
+teleported-to: "&aTeleported to %player%"
+player-offline: "&cPlayer %player% is offline"
+screenshot-link: "&aScreenshot: &e%url%"
+
+# Stats
+online-status: "&aOnline now"
+no-reports: "&eThis player has no reports."
+stats-header: "&6=== Report stats: %player% ==="
+stats-count: "&eTotal reports: &f%count%"
+stats-last-online: "&eLast online: &f%time%"
+stats-report-entry: "&7- %reason% &8(%time% ago)"
+stats-recent-header: "&7Recent reports:"
+stats-more-reports: "&7... and %count% more reports"
